@@ -1,72 +1,45 @@
-import pygame
-from pygame.locals import *
-from numpy import loadtxt
-import glob
+from game import *
 
-file_path = glob.glob("./input.txt")
+def AStar():
+  cost = [sys.maxsize]*N
+  isVisited = [False]*N
+  prev = [0]*N
+  queue = []
 
-N = 0
-M = 0
-matrix = [[]]
-x = -1
-y = -1
+  cost[source] = 0
+  isVisited[source] = True
+  current = source
+  queue.append(source)
+  f.write('{}'.format(current))
 
-screen = None
-
-
-def readFileIntoMatrix(file_path):
-	global N, M, matrix, x, y
-	f = open(file_path)
-	N, M = [int(i) for i in f.readline().split()]
-	matrix = [[int(j) for j in line.split()] for line in f]
-	x,y = matrix[-1][:]
-	matrix.pop(-1)
-
-def initMap():
-	pygame.init()
-	global screen, fpsClock
-	fpsClock = pygame.time.Clock()
-	screen = pygame.display.set_mode((320,320), 0, 32)
-	readFileIntoMatrix("map.txt")
-
-def drawMap():
-	
-	rows, cols = N,M
-	for col in range(cols):
-		for row in range(rows):
-			value = matrix[row][col]
-			if value == 1:
-				pygame.draw.rect(screen, (0, 255, 0), (col*20, row*20, 20, 20), 2)
-	pygame.draw.rect(screen, (255, 0, 0), (x*20, y*20, 20, 20), 0)
-
-def move(x, y):
-	screen.fill((0,0,0))
-	drawMap()
-	pygame.draw.rect(screen, (255, 0, 0), (x*20, y*20, 20, 20), 0)
-	pygame.display.update()
-	fpsClock.tick(10)
-
-def search():
-	pass
+  while(current != destination):
+    
+    # Find all paths from current node to its childs
+    for i in range(N):
+      tmp = matrix[current][i]
+      if(tmp > 0):
+        new_cost = cost[current] + tmp + h[i] if(current == source) else cost[current] + tmp - h[current] + h[i]
+        if(new_cost < cost[i]):
+          prev[i] = current
+          cost[i] = new_cost
+    
+    # Find child node with minimum path cost
+    min_cost = sys.maxsize
+    min_index = current
+    for j in range(len(cost)):
+      if(isVisited[j] == 0 and cost[j] < min_cost):
+        min_cost = cost[j]
+        min_index = j
+    
+    if(min_index == current):
+      break
+    current = min_index
+    isVisited[current] = 1
+    if(current == destination):
+      return
 
 if __name__ == "__main__":
-	initMap()
-	drawMap()
-	while True:
-		for event in pygame.event.get():
-			if event.type == QUIT:
-				exit()
-
-		while(matrix[x][y+1] == 0):
-			y+=1
-			move(x,y)
-		while(matrix[x-1][y] == 0):
-			x-=1
-			move(x,y)
-		while(matrix[x][y-1] == 0):
-			y-=1
-			move(x,y)
-		while(matrix[x+1][y] == 0):
-			x+=1
-			move(x,y)
+	g = Game()
+	g.play()
+		
 		
