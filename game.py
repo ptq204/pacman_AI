@@ -45,7 +45,7 @@ class Game:
 
   def drawMap(self):
     self.screen.fill(black)
-    self.map.loadMap("map1.txt")
+    self.map.loadMap("map2.txt")
     self.map.setPos()
     rows, cols = (self.map.N, self.map.M)
     for col in range(cols):
@@ -56,14 +56,16 @@ class Game:
         elif value == 2:
           self.drawFood(self.map.food[0], self.map.food[1])
         elif value == 3:
-          self.drawMonster(self.map.monster[0], self.map.monster[1])
+          self.drawMonster(col, row)
 
   def moveCharacter(self, code, x,y):
-    self.drawMap()
     if(code == 1):
       self.drawPacman(x, y)
     pygame.display.update()
-    self.fpsClock.tick(10)
+    self.fpsClock.tick(12)
+  
+  def erase(self, x, y):
+    pygame.draw.rect(self.screen, black, (x*20, y*20, square_width, square_height))
   
   def play(self):
     self.drawMap()
@@ -72,17 +74,25 @@ class Game:
     pacman = self.map.pacman
     food = self.map.food
     matrix = self.map.matrix
+    score = 0
 
     s = Search(AStar())
     path = s.search(pacman, food, matrix)
-    print(path)
+
     while True:
       for event in pygame.event.get():
         if event.type == QUIT:
           exit()
-      for i in range(len(path)):
-        x, y = path[i]
-        self.moveCharacter(1, x, y)
+      if(path != None):
+        for i in range(len(path)):
+          if(i > 0):
+            self.erase(path[i-1][0], path[i-1][1])
+          x, y = path[i]
+          self.moveCharacter(1, x, y)
+          score -= 1
+        score += 10
+      print('score: {}'.format(score))
+      return
       '''while(y+1 < N and matrix[y+1][x] == 0):
         y+=1
         self.moveCharacter(1,x,y)
