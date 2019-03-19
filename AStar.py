@@ -34,7 +34,7 @@ class AStar():
         tmp = matrix[y][x]
         h[(x,y)] = self.heuristic((x,y), destination)
 
-        if(tmp != 1):
+        if(tmp == 0 or tmp == 2):
           new_cost = cost[current] + tmp + h[(x,y)] if(current == source) else cost[current] + tmp - h[current] + h[(x,y)]
           if(not cost.__contains__((x, y)) or new_cost < cost[(x,y)]):
             prev[(x,y)] = current
@@ -54,5 +54,4 @@ class AStar():
       isVisited[current] = 1
       if(equal(current, destination)):
         path = printPath(source, destination, prev)
-        print(path)
         return path
