@@ -1,20 +1,22 @@
-def input() 
+def input():
     fi = open("map1.txt",'r')
-    N, M = [int(i) for i in f.readline().split()]
-	matrix = [[int(j) for j in line.split()] for line in f]
-	x,y = matrix[-1][:]
-	matrix.pop(-1)
+    N, M = [int(i) for i in fi.readline().split()]
+    matrix = [[int(j) for j in line.split()] for line in fi]
+    x,y = matrix[-1][:]
+    matrix.pop(-1)
     pre = []
-    end = (0,0)
-    r = BFS(pre,(x,y),matrix,end,M,N)
+    end = []
+    r = BFS(pre,tuple([x,y]),end,matrix,M,N)
+    return 0
 
-def successors(int i,int j): 
+def successors( i, j): 
     dx = [-1,0,1,0]
     dy = [0,-1,0,1]
     res = []
-    for i in range(0,4)
-        res.append((i+dx,j+dy))
+    for k in range(0,4):
+        res.append(tuple([i+dx[k],j+dy[k]]))
     return res
+
 
 def valid(node,map,m,n):
     x = node[0]
@@ -25,45 +27,53 @@ def valid(node,map,m,n):
         return False 
     if map[node[0]][node[1]] == 2:
         return True
-    return (map[node[0]][node[1]] == 0) 
+    if map[node[0]][node[1]] == 0: 
+        return True
+    return False
 
 def destination_check(map,node): 
-    return map[node[0]][node[1]] == 2
+    if map[node[0]][node[1]] == 2:
+        return True
+    return False
 
 def bfsInner(start,end,map,m,n): 
     pre = {}
     q = [start] 
     current = 0
-    mark = [[0]*m]*n
+    mark = [[0] * m for i in range(n)]
     while len(q) > 0:
         current = q.pop()  
         _successors = successors(current[0],current[1]) 
         if destination_check(map,current):
-            end = current
+            end.append(tuple(current))     
             return pre
         for node in _successors: 
             if valid(node,map,m,n) and mark[node[0]][node[1]] == 0: 
                 q.insert(0,node) 
-                mark[node[0]][node[1]] == 1
+                mark[node[0]][node[1]] = 1
                 pre[node] = current
                 if destination_check(map,current):
-                    end = current
+                    end.append(tuple(current)) 
+                    print (pre)
                     return pre
     return 0
 
-def BFS(pre,start,end,map,m,n): 
-    pre = bfs(Inner(start,end,map,m,n)
-    return intepret(pre)
-
-def intepret(pre):  
+def intepret(pre,start,end):  
     if pre == 0:
         return 0
     path = [] 
-    cur = pre[end]
-    while cur in pre.keys(): 
-        path.append(cur)
+    cur = pre[end[0]]
+    while cur[0] != start[0] or cur[1] != start[1] : 
+        path.insert(0,cur)
         cur = pre[cur]
+    path.insert(0,start)
+    print(path)
     return path 
+
+def BFS(pre,start,end,map,m,n): 
+    end = []
+    pre = bfsInner(start,end,map,m,n)
+    return intepret(pre,start,end)
 
 def dfs(start,end,map,m,n, limit): 
     pre = {}
@@ -84,14 +94,16 @@ def dfs(start,end,map,m,n, limit):
                 mark[node[0]][node[1]] == 1
                 pre[node] = current
                 if destination_check(map,current):
+                    print (pre)
                     return pre
     return 0
 
 def IDS(start,end,map,m,n): 
     for i in range(3,m*n+1): 
-        pre = dfs(start,end,map,m,n)
+        end = []
+        pre = dfs(start,end,map,m,n,i)
         if pre != 0:
-            return intepret(pre)
+            return intepret(pre,start,end)
     return 0 
 
 input()
