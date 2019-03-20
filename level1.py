@@ -75,35 +75,6 @@ def BFS(pre,start,end,map,m,n):
     pre = bfsInner(start,end,map,m,n)
     return intepret(pre,start,end)
 
-def dfs(start,end,map,m,n, limit): 
-    pre = {}
-    q = [start] 
-    current = 0
-    mark = [[0]*m]*n
-    lim = 0
-    while len(q) > 0 and lim < limit:
-        current = q.pop()  
-        lim+=1
-        _successors = successors(current[0],current[1]) 
-        if destination_check(map,current):
-            return pre
-        for i in range(len(_successors-1),0,-1): 
-            node = _successors[i]
-            if valid(node,map,m,n) and mark[node[0]][node[1]] == 0: 
-                q.append(node) 
-                mark[node[0]][node[1]] == 1
-                pre[node] = current
-                if destination_check(map,current):
-                    print (pre)
-                    return pre
-    return 0
 
-def IDS(start,end,map,m,n): 
-    for i in range(3,m*n+1): 
-        end = []
-        pre = dfs(start,end,map,m,n,i)
-        if pre != 0:
-            return intepret(pre,start,end)
-    return 0 
 
 input()

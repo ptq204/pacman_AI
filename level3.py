@@ -1,6 +1,5 @@
 from Level1 import *
 
-input()
 
 def Heuristic(map,nodes,m,n): 
     res = [0]*len(nodes)
@@ -37,4 +36,3 @@ def search(start,end,map,m,n):
         q.append(adjacent[next])
     return path
 
-input()
