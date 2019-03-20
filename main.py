@@ -30,7 +30,6 @@ def initMap():
 	readFileIntoMatrix("map.txt")
 
 def drawMap():
-	
 	rows, cols = N,M
 	for col in range(cols):
 		for row in range(rows):
