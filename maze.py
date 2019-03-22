@@ -13,8 +13,8 @@ class Maze:
     f = open(filepath)
     self.N, self.M = [int(i) for i in f.readline().split()]
     self.matrix = [[int(j) for j in line.split()] for line in f]
-    x, y = self.matrix[-1][:]
-    self.pacman = (x,y)
+    i,j = self.matrix[-1][:]
+    self.pacman = (i,j)
     self.matrix.pop(-1)
     f.close()
 
@@ -22,6 +22,6 @@ class Maze:
     for i in range(self.N):
       for j in range(self.M):
         if(self.matrix[i][j] == 3):
-          self.monster = (j,i)
+          self.monster = (i,j)
         elif(self.matrix[i][j] == 2):
-          self.food = (j,i)
+          self.food = (i,j)

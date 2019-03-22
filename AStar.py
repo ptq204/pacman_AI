@@ -31,7 +31,7 @@ class AStar():
         elif(i == 1): x -= 1
         elif(i == 2): y += 1
         else: y -= 1
-        tmp = matrix[y][x]
+        tmp = matrix[x][y]
         h[(x,y)] = self.heuristic((x,y), destination)
 
         if(tmp == 0 or tmp == 2):
