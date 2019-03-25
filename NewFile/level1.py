@@ -67,7 +67,7 @@ def advancedBFS(map,start,m,n):
                 mark[node[0]][node[1]] = True 
                 if destination_check(map,node): 
                     return node, pre
-    return 0
+    return 0,0
 
 
 def BFS(map,start,m,n):
