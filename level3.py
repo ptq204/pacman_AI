@@ -19,7 +19,7 @@ def search(start,end,map,m,n):
     path = []
     mark = [[0] * m for i in range(n)]
     count = 0; 
-    while q > 0 and count <= m*n: 
+    while q > 0 and count < m*n: 
         current = q.pop()
         if (mark[current[0]][current[1]] == 0):
             mark[current[0]][current[1]] == 1
@@ -29,9 +29,10 @@ def search(start,end,map,m,n):
         heuristic = Heuristic(map,adjacent,m,n) 
         next = 0 
         for i in range(0,4): 
-            heuristic[i] -= mark[adjacent[i][0]][adjacent[i][1]]
-            if heuristic[next] < heuristic[i]:
-                next = i
+            if heuristic[i] > 0: 
+                heuristic[i] -= mark[adjacent[i][0]][adjacent[i][1]]
+                if heuristic[next] < heuristic[i]:
+                    next = i
         path.append(adjacent[next])
         q.append(adjacent[next])
     return path
