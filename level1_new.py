@@ -1,13 +1,15 @@
-'''def input():
-    fi = open("map1.txt",'r')
+
+def input():
+    fi = open("map.txt",'r')
     N, M = [int(i) for i in fi.readline().split()]
     matrix = [[int(j) for j in line.split()] for line in fi]
     x,y = matrix[-1][:]
     matrix.pop(-1)
     pre = []
     end = []
-    r = BFS(pre,tuple([x,y]),end,matrix,M,N)
-    return 0'''
+    r = BFS(matrix,tuple([x,y]),M,N)
+    print r 
+    return 0
 
 def successors( i, j): 
     dx = [-1,0,1,0]
@@ -48,31 +50,28 @@ def SortedSuccessor(map,node,m,n):
     return res 
                 
 
-def advancedBFS(map,start,m,n): 
+def advancedBFS(map,start,ref_end,m,n): 
     q = [start]
     pre = {}
     pre[start] = -1
-    mark = [[False] * m for i in range(n)]
     while len(q) > 0: 
         cur = q.pop() 
         if destination_check(map,cur): 
-            return cur, pre 
-        adjacent = SortedSuccessor(map, cur,m,n)
-        mark[cur[0]][cur[1]] = True 
-        for node in adjacent:
-            if not mark[node[0]][node[1]]: 
-                q.insert(0,node)
-                pre[node] = cur
-                mark[node[0]][node[1]] = True 
-                if destination_check(map,node): 
-                    return node, pre
-    return 0
+            ref_end = cur
+            return pre 
+        adjacent = SortedSuccessor(map, cur,m,n) 
+        for node in adjacent: 
+            q.insert(0,node)
+            pre[node] = cur
+            if destination_check(map,node): 
+                ref_end = node
+                return pre
 
 
 def BFS(map,start,m,n):
-
-    end,pre = advancedBFS(map,start,m,n)
-    if pre != 0: 
+    end = 0 
+    pre = advancedBFS(map,start,end,m,n)
+    if len(pre) > 1: 
         path = []
         cur = end 
         while cur != -1: 
@@ -81,4 +80,4 @@ def BFS(map,start,m,n):
         return path
     return 0 
 
-#input() '''
+input()
