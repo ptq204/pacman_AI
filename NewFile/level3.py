@@ -47,11 +47,29 @@ def SortedSuccessor(map,node,m,n):
             res.insert(k,cur)
     return res 
 
-
+def hill_climbing_inner(map,start,m,n): 
+    q = [start]
+    pre = {}
+    pre[start] = -1
+    mark = [[False] * m for i in range(n)]
+    while len(q) > 0: 
+        cur = q.pop() 
+        if destination_check(map,cur): 
+            return cur, pre 
+        adjacent = SortedSuccessor(map, cur,m,n)
+        mark[cur[0]][cur[1]] = True 
+        for node in adjacent:
+            if not mark[node[0]][node[1]]: 
+                q.insert(0,node)
+                pre[node] = cur
+                mark[node[0]][node[1]] = True 
+                if destination_check(map,node): 
+                    return node, pre
+    return 0
 
 def best_successor(map,node, m,n,mark):
     adj = successors(node[0],node[1])
-
+    res = 0
     r = []
     for node in adj: 
         if valid(node,map,m,n) and not  mark[node[0]][node[1]]: 
