@@ -52,7 +52,7 @@ class Game:
     elif(level == 2):
       filename = 'level2_2.txt'
     elif(level == 3):
-      filename = 'level2_1.txt'
+      filename = 'map31.txt'
     
     self.map.loadMap(filename)
     self.map.setPos()
@@ -82,39 +82,39 @@ class Game:
   def play(self):
     level = int(input("Choose level: "))
 
-    self.drawMap(level)
-
-    N = self.map.N
-    M = self.map.M
-    pacman = self.map.pacman
-    food = self.map.food
-    matrix = self.map.matrix
-    score = 0
-    path = None
-
     while True:
+      self.drawMap(level)
+      N = self.map.N
+      M = self.map.M
+      pacman = self.map.pacman
+      food = self.map.food
+      matrix = self.map.matrix
+      score = 0
+      path = None
+
       for event in pygame.event.get():
         if event.type == QUIT:
           exit()
 
       if(level == 1 or level == 2):
-        path = BFS([],self.map.pacman, [], matrix, M, N)
-        print(path)
-        if(path != None):
-          path.append(self.map.food)
-          for i in range(len(path)):
-            if(i == 0):
-              s = path[0]
-              d = path[0]
-            else:
-              s = path[i-1]
-              d = path[i]
-            self.moveCharacter(1, s, d)
-            score -= 1
-          self.erase(path[-1][0], path[-1][1])
-          self.drawFood(path[-1][0], path[-1][1])
-          score += 10
-
+        path = BFS(matrix, self.map.pacman, M, N)
+        
       elif(level == 3):
-        path = search(self.map.pacman, [], matrix, M, N)
+        path = hill_climbing(matrix, self.map.pacman, M, N)
+      
+      print(path)
+      if(path != None and path != 0):
+        for i in range(len(path)):
+          if(i == 0):
+            s = path[0]
+            d = path[0]
+          else:
+            s = path[i-1]
+            d = path[i]
+          self.moveCharacter(1, s, d)
+          score -= 1
+          if(matrix[d[0]][d[1]] == 2):
+            score += 10
+        #self.erase(path[-1][0], path[-1][1])
+        #self.drawFood(path[-1][0], path[-1][1])
       print('score: {}'.format(score))
