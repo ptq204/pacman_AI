@@ -47,10 +47,41 @@ def SortedSuccessor(map,node,m,n):
             res.insert(k,cur)
     return res 
 
-
+def successors_HillClimbing(map,i,j,m,n): 
+    ''' 1 2
+        3 4 ''' 
+    res = [] 
+    di = {"left": 0, "right":0, "up":-1, "down":+1}
+    dj = {"left": -1, "right": +1, "up":0, "down":0}
+    # if in the first region, then down first, then right, then top, then left
+    # 
+    if i <= m/2 and j <= n/2: 
+        res.append([i+di["down"]),j+dj["down"])
+        res.append([i+di["right"]),j+dj["right"])
+        res.append([i+di["up"]),j+dj["up"])
+        res.append([i+di["left"]),j+dj["left"])
+        return res 
+    elif i <= m/2 and j >= n/2: 
+        res.append([i+di["left"]),j+dj["left"])
+        res.append([i+di["down"]),j+dj["down"])
+        res.append([i+di["right"]),j+dj["right"])
+        res.append([i+di["up"]),j+dj["up"])
+        return res
+    elif i >= m/2 and j <= n/2: 
+        res.append([i+di["right"]),j+dj["right"])
+        res.append([i+di["up"]),j+dj["up"])
+        res.append([i+di["left"]),j+dj["left"])
+        res.append([i+di["down"]),j+dj["down"])
+        return res 
+    else #i >= m/2 and j >= n/2: 
+        res.append([i+di["up"]),j+dj["up"])
+        res.append([i+di["left"]),j+dj["left"])
+        res.append([i+di["down"]),j+dj["down"])
+        res.append([i+di["right"]),j+dj["right"])
+        return res 
 
 def best_successor(map,node, m,n,mark):
-    adj = successors(node[0],node[1])
+    adj = successors_HillClimbing(map,node[0],node[1],m,n)
 
     r = []
     for node in adj: 
