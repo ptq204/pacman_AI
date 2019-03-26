@@ -58,7 +58,8 @@ def PacMan_Choose(possibleMoves,h,map,m,n):
 def Ghost_Choose(pacman,ghosts, map,h): 
     
     for g in ghosts: 
-        if mahattanDistance(g[0],g[1],pa)
+        adj = successors(g[0],g[1]) 
+        hg = [mahattanDistance(g[0])]
 
 
 # Bot will choose things that minimize pacman's score
