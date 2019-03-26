@@ -1,3 +1,15 @@
+
+def input():
+    fi = open("map.txt",'r')
+    N, M = [int(i) for i in fi.readline().split()]
+    matrix = [[int(j) for j in line.split()] for line in fi]
+    x,y = matrix[-1][:]
+    matrix.pop(-1)
+
+    r = BFS(matrix,tuple([x,y]),M,N)
+    print(r) 
+    return 0
+
 def successors( i, j): 
     dx = [-1,0,1,0]
     dy = [0,-1,0,1]
@@ -55,7 +67,7 @@ def advancedBFS(map,start,m,n):
                 mark[node[0]][node[1]] = True 
                 if destination_check(map,node): 
                     return node, pre
-    return 0
+    return 0,0
 
 
 def BFS(map,start,m,n):
@@ -70,4 +82,4 @@ def BFS(map,start,m,n):
         return path
     return 0 
 
-#input() '''
+input()

@@ -52,7 +52,7 @@ class Game:
     elif(level == 2):
       filename = 'level2_2.txt'
     elif(level == 3):
-      filename = 'map31.txt'
+      filename = 'map32.txt'
     
     self.map.loadMap(filename)
     self.map.setPos()
@@ -80,6 +80,7 @@ class Game:
     pygame.draw.rect(self.screen, black, (j*20, i*20, square_width, square_height))
   
   def play(self):
+
     level = int(input("Choose level: "))
 
     while True:

@@ -1,4 +1,4 @@
-'''def input():
+def input():
     fi = open("map.txt",'r')
     N, M = [int(i) for i in fi.readline().split()]
     matrix = [[int(j) for j in line.split()] for line in fi]
@@ -7,7 +7,7 @@
 
     r = hill_climbing(matrix,tuple([x,y]),M,N)
     print(r) 
-    return 0'''
+    return 0
 
 def successors( i, j): 
     dx = [-1,0,1,0]
@@ -47,42 +47,29 @@ def SortedSuccessor(map,node,m,n):
             res.insert(k,cur)
     return res 
 
-def successors_HillClimbing(map,i,j,m,n): 
-    ''' 1 2
-        3 4 ''' 
-    res = [] 
-    di = {"left": 0, "right":0, "up":-1, "down":+1}
-    dj = {"left": -1, "right": +1, "up":0, "down":0}
-    # if in the first region, then down first, then right, then top, then left
-    # 
-    if i <= m/2 and j <= n/2: 
-        res.append([i+di["down"],j+dj["down"]])
-        res.append([i+di["right"],j+dj["right"]])
-        res.append([i+di["up"],j+dj["up"]])
-        res.append([i+di["left"],j+dj["left"]])
-        return res 
-    elif i <= m/2 and j >= n/2: 
-        res.append([i+di["left"],j+dj["left"]])
-        res.append([i+di["down"],j+dj["down"]])
-        res.append([i+di["right"],j+dj["right"]])
-        res.append([i+di["up"],j+dj["up"]])
-        return res
-    elif i >= m/2 and j <= n/2: 
-        res.append([i+di["right"],j+dj["right"]])
-        res.append([i+di["up"],j+dj["up"]])
-        res.append([i+di["left"],j+dj["left"]])
-        res.append([i+di["down"],j+dj["down"]])
-        return res 
-    else: #i >= m/2 and j >= n/2: 
-        res.append([i+di["up"],j+dj["up"]])
-        res.append([i+di["left"],j+dj["left"]])
-        res.append([i+di["down"],j+dj["down"]])
-        res.append([i+di["right"],j+dj["right"]])
-        return res 
+def hill_climbing_inner(map,start,m,n): 
+    q = [start]
+    pre = {}
+    pre[start] = -1
+    mark = [[False] * m for i in range(n)]
+    while len(q) > 0: 
+        cur = q.pop() 
+        if destination_check(map,cur): 
+            return cur, pre 
+        adjacent = SortedSuccessor(map, cur,m,n)
+        mark[cur[0]][cur[1]] = True 
+        for node in adjacent:
+            if not mark[node[0]][node[1]]: 
+                q.insert(0,node)
+                pre[node] = cur
+                mark[node[0]][node[1]] = True 
+                if destination_check(map,node): 
+                    return node, pre
+    return 0
 
 def best_successor(map,node, m,n,mark):
-    adj = successors_HillClimbing(map,node[0],node[1],m,n)
-
+    adj = successors(node[0],node[1])
+    res = 0
     r = []
     for node in adj: 
         if valid(node,map,m,n) and not  mark[node[0]][node[1]]: 
@@ -104,3 +91,6 @@ def hill_climbing(map,start,m,n):
             mark[nextMove[0]][nextMove[1]] = True 
         else: break
     return path
+
+input()
+
