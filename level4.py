@@ -25,6 +25,7 @@ def bound_check(x,y):
     if x >= n or y >= m:
         return False 
     return True
+
 def stimulate_bot(map,pacman,ghosts,m,n,h_pacman): 
     res = [] 
     for g in ghosts: 

@@ -1,14 +1,3 @@
-'''def input():
-    fi = open("map1.txt",'r')
-    N, M = [int(i) for i in fi.readline().split()]
-    matrix = [[int(j) for j in line.split()] for line in fi]
-    x,y = matrix[-1][:]
-    matrix.pop(-1)
-    pre = []
-    end = []
-    r = BFS(pre,tuple([x,y]),end,matrix,M,N)
-    return 0'''
-
 def successors( i, j): 
     dx = [-1,0,1,0]
     dy = [0,-1,0,1]
