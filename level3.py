@@ -1,13 +1,18 @@
-'''def input():
-    fi = open("map.txt",'r')
-    N, M = [int(i) for i in fi.readline().split()]
-    matrix = [[int(j) for j in line.split()] for line in fi]
-    x,y = matrix[-1][:]
-    matrix.pop(-1)
 
-    r = hill_climbing(matrix,tuple([x,y]),M,N)
-    print(r) 
-    return 0'''
+# def inputMap():
+#     fi = open("map32.txt",'r')
+#     N, M = [int(i) for i in fi.readline().split()]
+#     matrix = [[int(j) for j in line.split()] for line in fi]
+#     x,y = matrix[-1][:]
+#     matrix.pop(-1)
+
+#     r = hill_climbing(matrix,tuple([x,y]),M,N)
+#     print(r) 
+#     # '''There is a graph with n nodes and
+#     #         There is no loop, no cycle
+#     #         There is at most one edge between a pair of vertex 
+#     #         if there are exactly 2 nodes '''
+#     return 0
 
 def successors( i, j): 
     dx = [-1,0,1,0]
@@ -17,6 +22,8 @@ def successors( i, j):
         res.append(tuple([i+dx[k],j+dy[k]]))
     return res
 
+def mahattanDistance(x,y,z,t,):
+    return abs(x-z) + abs(y-t) 
 
 def valid(node,map,m,n):
     x = node[0]
@@ -94,13 +101,62 @@ def best_successor(map,node, m,n,mark):
     return 0
 
 def hill_climbing(map,start,m,n):
+    # path = [start]
+    # mark = [[False] * m for i in range(n)]
+    # mark[start[0]][start[1]] = True
+    # while True: 
+    #     nextMove = best_successor(map,path[-1],m,n,mark) 
+    #     if nextMove!= 0: 
+    #         path.append(nextMove)
+    #         mark[nextMove[0]][nextMove[1]] = True 
+    #     else: break
+    return PacManLv3(map,start,m,n)
+
+def isAdjacent(A,B): 
+    if (mahattanDistance(A[0],A[1],B[0],B[1]) == 1):
+        return True
+    return False 
+
+def PacManLv3(map,start,m,n):  
+    mark = [[False]*m for i in range(n)]
+    q = []
+    des = 0
+    tryq = []   
     path = [start]
-    mark = [[False] * m for i in range(n)]
-    mark[start[0]][start[1]] = True
-    while True: 
-        nextMove = best_successor(map,path[-1],m,n,mark) 
-        if nextMove!= 0: 
-            path.append(nextMove)
-            mark[nextMove[0]][nextMove[1]] = True 
-        else: break
+    while True:
+        
+        #if the adj has food, get it
+        #else move toward the nearest known food
+        #else move as instinct 
+        nextMoves = successors_HillClimbing(map,path[-1][0],path[-1][1],m,n)
+        for move in nextMoves: 
+            if valid(move,map,m,n) and map[move[0]][move[1]] == 2 and not mark[move[0]][move[1]]: 
+                q.append(move)
+        if len(q) > 0: #if we have seen foods, then try to get them 
+            cur = q[-1] 
+            if isAdjacent(cur,path[-1]): #if can get it, then get
+                path.append(cur)
+                mark[cur[0]][cur[1]] = True 
+                q.pop() 
+            else: 
+                minMove = move[0]
+                minDistance = m*n*n 
+                for move in nextMoves: 
+                    if valid(move,map,m,n):
+                        distance = mahattanDistance(move[0],move[1],cur[0],cur[1])
+                        if  minDistance > distance: 
+                            minDistance = distance
+                            minMove = move #else try to move toward the food
+                path.append(minMove)
+        else: 
+            #move as instinct 
+            nextMove = best_successor(map,path[-1],m,n,mark) 
+            if nextMove!= 0: 
+                path.append(nextMove)
+                mark[nextMove[0]][nextMove[1]] = True 
+            else: break
     return path
+
+
+
+# inputMap() 
