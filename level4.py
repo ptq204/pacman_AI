@@ -113,12 +113,10 @@ def TryBFS(gameMap,h,ghosts,pacman,m,n):
     if end != 0: 
         respath = [end]
         cur = end 
-        while cur != -1: 
+        while cur != -1 and cur[0] != pacman[0] and cur[1] != pacman[1]: 
             respath.insert(0,cur)
             cur = pre[tuple(cur)]
-        # if respath[-1][0] == pacman[0] and respath[-1][1] == pacman[1]:
-        #     return 0 
-        respath.remove(respath[0])
+         
         return respath
     return 0
 
@@ -130,16 +128,18 @@ def PacManBFS(pacman,gameMap,h,m,n,ghosts,moveQueue):
             moveQueue.remove(cur)
             return cur
         else: 
-            newPath,end = TryBFS(gameMap,ghosts,pacman,m,n) 
+            newPath,end = TryBFS(gameMap,h,ghosts,pacman,m,n) 
             if newPath != 0: 
                 moveQueue.clear() 
                 moveQueue.append(newPath)
                 cur = moveQueue[0]
                 moveQueue.remove(cur)
-                return cur 
+                return cur
+            else:
+                return 0
     else: #run GBFS to find the path and add it to queue 
         newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
-        if newPath != 0: 
+        if newPath != 0 and len(newPath) > 0: 
             moveQueue.clear() 
             moveQueue[:] = newPath[:]
             cur = moveQueue[0]
@@ -171,6 +171,9 @@ def startGame(gameMap,pacman,m,n):
         current_turn +=1 
         nextMove = PacManBFS(path[-1],gameMap,h,m,n,ghosts[-1],moveQueue)
         if nextMove != 0: 
+            if gameMap[nextMove[0]][nextMove[1]] == 2: 
+                gameMap[nextMove[0]][nextMove[1]] = 0
+                # h = HeuristicLv4(gameMap,m,n)
             path.append(nextMove) 
             # turnMatrix[nextMove[0]][nextMove[1]] = current_turn
         else:
