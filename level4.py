@@ -201,7 +201,7 @@ def startGame(gameMap,pacman,m,n):
             # turnMatrix[nextMove[0]][nextMove[1]] = current_turn
         else:
             break 
-        ghostMoves = stimulate_bot(blankgameMap,turnMatrix,pacman,ghosts[-1],m,n,h)
+        ghostMoves = stimulate_bot(blankgameMap,turnMatrix,path[-1],ghosts[-1],m,n,h)
         for g in ghostMoves: 
             turnMatrix[g[0]][g[1]] = current_turn
         ghosts.append(ghostMoves)
@@ -220,4 +220,4 @@ def inputgameMap():
 #     #         There is at most one edge between a pair of vertex 
 #     #         if there are exactly 2 nodes '''
     
-#inputgameMap() 
+inputgameMap() 
