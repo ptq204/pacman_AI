@@ -131,19 +131,21 @@ def TryBFS(gameMap,h,ghosts,pacman,m,n):
     return 0
 
 def findNewPath(pacman,gameMap,h,m,n,ghosts,moveQueue): 
-    changes = [] 
+    changes = dict()
     #temporary changes map
     for g in ghosts: 
         s = ValidGhostSuccessors(g[0],g[1],m,n,gameMap)
+        changes[g] = gameMap[g[0]][g[1]]
         gameMap[g[0]][g[1]] = 1
-        changes.append(g)
+        # changes.append(g)
         for s_g in s: 
+            changes[s_g] = gameMap[s_g[0]][s_g[1]]
             gameMap[s_g[0]][s_g[1]] = 1
-            changes.append(s_g)
+            
     newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
     #return the original value
-    for k in changes: 
-        gameMap[k[0]][k[1]] = 0
+    for k in changes.keys(): 
+        gameMap[k[0]][k[1]] = changes[k]
     if newPath != 0: 
         moveQueue.clear() 
         moveQueue[:] = newPath[:]
