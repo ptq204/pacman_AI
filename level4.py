@@ -122,12 +122,12 @@ def TryBFS(gameMap,h,ghosts,pacman,m,n):
 
 
 def PacManBFS(pacman,gameMap,h,m,n,ghosts,moveQueue): 
-    if len(moveQueue) : 
-        cur = moveQueue[0]
-        if valid(cur[0],cur[1],m,n,gameMap,ghosts):
+    if len(moveQueue) : #if there is any optimized move toward the food in the
+        cur = moveQueue[0] #queue
+        if valid(cur[0],cur[1],m,n,gameMap,ghosts): #if that move is still valid 
             moveQueue.remove(cur)
             return cur
-        else: 
+        else: #find another path 
             newPath,end = TryBFS(gameMap,h,ghosts,pacman,m,n) 
             if newPath != 0: 
                 moveQueue.clear() 
