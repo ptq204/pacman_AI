@@ -27,7 +27,7 @@ def bound_check(x,y,m,n):
         return False 
     return True
 
-def valid(i,j,m,n,gameMap,ghosts): 
+def validLV4(i,j,m,n,gameMap,ghosts): 
     if not bound_check(i,j,m,n):
         return False
     if gameMap[i][j] == 1:
@@ -70,10 +70,18 @@ def PacMan_Choose(possibleMoves,h,gameMap,turnMatrix, current_turn, m,n,ghosts):
     res = 0  
     best_h = m*n*n
     for move in possibleMoves:
-        if valid(move[0],move[1],m,n,gameMap,ghosts) and current_turn - turnMatrix[move[0]][move[1]] > 1:
+        if validLV4(move[0],move[1],m,n,gameMap,ghosts) and current_turn - turnMatrix[move[0]][move[1]] > 1:
             if best_h > h[move[0]][move[1]]: 
                 best_h = h[move[0]][move[1]]
                 res = move
+    return res 
+
+def ValidGhostSuccessors(x,y,m,n,gameMap): 
+    s = successors(x,y)
+    res = [] 
+    for ghost in s: 
+        if validForGhost(ghost,gameMap,m,n):
+            res.append(ghost)
     return res 
 
 def TryBFS(gameMap,h,ghosts,pacman,m,n): 
@@ -120,21 +128,36 @@ def TryBFS(gameMap,h,ghosts,pacman,m,n):
     return 0
 
 
-def PacManBFS(pacman,gameMap,h,m,n,ghosts,moveQueue): 
+def PacManBFS(pacman,gameMap,h,m,n,ghosts,moveQueue):
+
     if len(moveQueue) : #if there is any optimized move toward the food in the
         cur = moveQueue[0] #queue
-        if valid(cur[0],cur[1],m,n,gameMap,ghosts): #if that move is still valid 
+        if validLV4(cur[0],cur[1],m,n,gameMap,ghosts): #if that move is still valid 
             moveQueue.remove(cur)
             return cur
-        else: #find another path 
-            newPath,end = TryBFS(gameMap,h,ghosts,pacman,m,n) 
+        else: #find another path
+            changes = [] 
+            #temporary changes map
+            for g in ghosts: 
+                s = ValidGhostSuccessors(g[0],g[1],m,n,gameMap)
+                gameMap[g[0]][g[1]] = 1
+                changes.append(g)
+                for s_g in s: 
+                    gameMap[s_g[0]][s_g[1]] = 1
+                    changes.append(s_g)
+            newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
+            #return the original value
+            for k in changes: 
+                gameMap[k[0]][k[1]] = 0
             if newPath != 0: 
                 moveQueue.clear() 
-                moveQueue.append(newPath)
+                moveQueue[:] = newPath[:]
+                cur = moveQueue[0]
                 cur = moveQueue[0]
                 moveQueue.remove(cur)
                 return cur
             else:
+                moveQueue.clear()
                 return 0
     else: #run GBFS to find the path and add it to queue 
         newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
@@ -186,7 +209,7 @@ def inputgameMap():
     matrix = [[int(j) for j in line.split()] for line in fi]
     x,y = matrix[-1][:]
     matrix.pop(-1)
-    startGame(matrix,(x,y),M,N)
+    print(startGame(matrix,(x,y),M,N))
   
 #     print(r) 
 #     # '''There is a graph with n nodes and
