@@ -94,26 +94,25 @@ def TryBFS(gameMap,h,ghosts,pacman,m,n):
         adjacent1 = successors_HillClimbing(gameMap, cur[0],cur[1],m,n)
         adjacent = [] 
         for node in adjacent1: 
-            if validForGhost(node,gameMap,m,n): 
+            if validForGhost(node,gameMap,m,n) and not mark[node[0]][node[1]]: 
                 k = 0 
-                while k < len(adjacent) and h[node[0]][node[1]] < h[adjacent[k][0]][adjacent[k][1]]: 
+                while k < len(adjacent) and h[node[0]][node[1]] > h[adjacent[k][0]][adjacent[k][1]]: 
                     k +=1 
                 adjacent.insert(k,tuple(node))
         for node in adjacent:
-            if not mark[node[0]][node[1]]: 
-                q.insert(0,node)
-                pre[tuple(node)] = cur
-                mark[node[0]][node[1]] = True 
-                if gameMap[cur[0]][cur[1]] == 2: 
-                    end = cur
-                    q.clear() 
-                    stillNotFound = False
-                    break
-                    
+            q.insert(0,node)
+            pre[tuple(node)] = cur
+            mark[node[0]][node[1]] = True 
+            if gameMap[node[0]][node[1]] == 2: 
+                end = node
+                q.clear() 
+                stillNotFound = False
+                break
+                
     if end != 0: 
-        respath = [end]
+        respath = []
         cur = end 
-        while cur != -1 and cur[0] != pacman[0] and cur[1] != pacman[1]: 
+        while cur != -1 and not (cur[0] == pacman[0] and cur[1] == pacman[1]): 
             respath.insert(0,cur)
             cur = pre[tuple(cur)]
          
