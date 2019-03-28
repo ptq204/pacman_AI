@@ -44,14 +44,17 @@ def validForGhost(node,gameMap,m,n):
         return False 
     return True 
 
-def stimulate_bot(gameMap,pacman,ghosts,m,n,h_pacman): 
+def stimulate_bot(gameMap,turnMatrix, pacman,ghosts,m,n,h_pacman): 
     res = [] 
     for g in ghosts: 
         adj = successors(g[0],g[1]) 
         h = g
         a = m*n*n 
         for move in adj: 
-            if validForGhost(move,gameMap,m,n):
+            #ensure that ghosts do not travel back and forth in the same cell
+            delta = turnMatrix[move[0]][move[1]] - turnMatrix[move[0]][move[1]]
+            firstTime = (turnMatrix[move[0]][move[1]] == 0)
+            if validForGhost(move,gameMap,m,n) and (abs(delta) >= 2 or firstTime) :
                 if a > mahattanDistance(move[0],move[1],pacman[0],pacman[1]):
                     a = mahattanDistance(move[0],move[1],pacman[0],pacman[1]) 
                     h = move
@@ -127,46 +130,40 @@ def TryBFS(gameMap,h,ghosts,pacman,m,n):
         return respath
     return 0
 
-
+def findNewPath(pacman,gameMap,h,m,n,ghosts,moveQueue): 
+    changes = [] 
+    #temporary changes map
+    for g in ghosts: 
+        s = ValidGhostSuccessors(g[0],g[1],m,n,gameMap)
+        gameMap[g[0]][g[1]] = 1
+        changes.append(g)
+        for s_g in s: 
+            gameMap[s_g[0]][s_g[1]] = 1
+            changes.append(s_g)
+    newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
+    #return the original value
+    for k in changes: 
+        gameMap[k[0]][k[1]] = 0
+    if newPath != 0: 
+        moveQueue.clear() 
+        moveQueue[:] = newPath[:]
+        cur = moveQueue[0]
+        cur = moveQueue[0]
+        moveQueue.remove(cur)
+        return cur
+    else:
+        moveQueue.clear()
+        return 0
 def PacManBFS(pacman,gameMap,h,m,n,ghosts,moveQueue):
-
     if len(moveQueue) : #if there is any optimized move toward the food in the
         cur = moveQueue[0] #queue
         if validLV4(cur[0],cur[1],m,n,gameMap,ghosts): #if that move is still valid 
             moveQueue.remove(cur)
             return cur
         else: #find another path
-            changes = [] 
-            #temporary changes map
-            for g in ghosts: 
-                s = ValidGhostSuccessors(g[0],g[1],m,n,gameMap)
-                gameMap[g[0]][g[1]] = 1
-                changes.append(g)
-                for s_g in s: 
-                    gameMap[s_g[0]][s_g[1]] = 1
-                    changes.append(s_g)
-            newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
-            #return the original value
-            for k in changes: 
-                gameMap[k[0]][k[1]] = 0
-            if newPath != 0: 
-                moveQueue.clear() 
-                moveQueue[:] = newPath[:]
-                cur = moveQueue[0]
-                cur = moveQueue[0]
-                moveQueue.remove(cur)
-                return cur
-            else:
-                moveQueue.clear()
-                return 0
+            return findNewPath(pacman,gameMap,h,m,n,ghosts,moveQueue)
     else: #run GBFS to find the path and add it to queue 
-        newPath = TryBFS(gameMap,h,ghosts,pacman,m,n) 
-        if newPath != 0 and len(newPath) > 0: 
-            moveQueue.clear() 
-            moveQueue[:] = newPath[:]
-            cur = moveQueue[0]
-            moveQueue.remove(cur)
-            return cur 
+            return findNewPath(pacman,gameMap,h,m,n,ghosts,moveQueue)
     return 0 
 
 
@@ -177,7 +174,7 @@ def startGame(gameMap,pacman,m,n):
     path = [pacman] 
     start_ghosts = []
     turnMatrix = [[0]*m for i in range(n)]
-    turnMatrix[pacman[0]][pacman[1]] = 1
+    # turnMatrix[pacman[0]][pacman[1]] = 1
     tempq = [] 
     for i in range(0,m):
         for j in range(0,n): 
@@ -185,7 +182,11 @@ def startGame(gameMap,pacman,m,n):
                 start_ghosts.append(tuple([i,j])) 
                 blankgameMap[i][j] = 0 
     ghosts = [start_ghosts]
-    current_turn = 1 
+    current_turn = 1
+    #the ghost does not move to the same cell
+    #unless at least 3 turn is passed
+    for g in start_ghosts: 
+        turnMatrix[g[0]][g[1]] = current_turn 
     moveQueue = []
     while True: 
         # possibleMoves = successors_HillClimbing(gameMap,path[-1][0],path[-1][1],m,n) 
@@ -200,7 +201,9 @@ def startGame(gameMap,pacman,m,n):
             # turnMatrix[nextMove[0]][nextMove[1]] = current_turn
         else:
             break 
-        ghostMoves = stimulate_bot(blankgameMap,pacman,ghosts[-1],m,n,h) 
+        ghostMoves = stimulate_bot(blankgameMap,turnMatrix,pacman,ghosts[-1],m,n,h)
+        for g in ghostMoves: 
+            turnMatrix[g[0]][g[1]] = current_turn
         ghosts.append(ghostMoves)
     return path,ghosts 
 def inputgameMap():
