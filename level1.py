@@ -6,6 +6,9 @@ def successors( i, j):
         res.append(tuple([i+dx[k],j+dy[k]]))
     return res
 
+def mahattanDistance(x,y,z,t,):
+    return abs(x-z) + abs(y-t)
+
 def Heuristics(gameMap,m,n): 
     foods = [] 
     h = [[m*n] * m for i in range(n)]
