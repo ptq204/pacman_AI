@@ -8,6 +8,7 @@ from AStar import *
 from level1 import *
 from level3 import *
 from level4 import *
+from util import *
 class Game:
 
   def __init__(self):
@@ -70,12 +71,12 @@ class Game:
         elif value == 3:
           self.drawMonster(row, col)
 
-  def moveCharacter(self, code, s, d):
+  def moveCharacter(self, code, s, d, matrix):
     self.erase(s[0], s[1])
     if(code == 1):
       self.drawPacman(d[0], d[1])
     if(code == 2):
-      if(self.map.matrix[s[0]][s[1]] == 2):
+      if(matrix[s[0]][s[1]] == 2):
         self.drawFood(s[0], s[1])
       self.drawMonster(d[0], d[1])
   
@@ -115,7 +116,7 @@ class Game:
             else:
               s = path[i-1]
               d = path[i]
-            self.moveCharacter(1, s, d)
+            self.moveCharacter(1, s, d, matrix)
             score -= 1
             if(matrix[d[0]][d[1]] == 2):
               score += 10
@@ -128,6 +129,7 @@ class Game:
         print(path)
         print(ghosts)
         gidx = 0
+        postPacman = self.map.pacman
         if(path != None and path != 0):
           for i in range(len(path)):
             if(i == 0):
@@ -136,9 +138,11 @@ class Game:
             else:
               s = path[i-1]
               d = path[i]
-            self.moveCharacter(1, s, d)
+            self.moveCharacter(1, s, d, matrix)
+            postPacman = d
             score -= 1
             if(matrix[d[0]][d[1]] == 2):
+              print("Pacman ate food")
               score += 10
             
             if(len(ghosts[i]) != 0):
@@ -149,8 +153,10 @@ class Game:
                 else:
                   s = ghosts[i-1][j]
                   d = ghosts[i][j]
-                print("Move ghost {} from {} to {}".format(j, s, d))
-                self.moveCharacter(2, s, d)
+                #print("Move ghost {} from {} to {}".format(j, s, d))
+                self.moveCharacter(2, s, d, matrix)
+                if(equal(d, postPacman)):
+                  print("Pacman meet ghost")
             pygame.display.update()
             self.fpsClock.tick(9)   
       print('score: {}'.format(score))
