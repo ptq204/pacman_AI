@@ -45,7 +45,7 @@ def SortedSuccessor(map,node,m,n,h):
     for cur in r: 
         if valid(cur,map,m,n): 
             k = 0
-            while k < len(res) and h[res[k][0]][res[k][1]] > h[cur[0]][cur[1]]: 
+            while k < len(res) and h[res[k][0]][res[k][1]] < h[cur[0]][cur[1]]: 
                 k+=1 
             res.insert(k,cur)
     return res 

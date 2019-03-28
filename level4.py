@@ -188,7 +188,7 @@ def startGame(gameMap,pacman,m,n):
     current_turn = 1 
     moveQueue = []
     while True: 
-        possibleMoves = successors_HillClimbing(gameMap,path[-1][0],path[-1][1],m,n) 
+        # possibleMoves = successors_HillClimbing(gameMap,path[-1][0],path[-1][1],m,n) 
         # nextMove = PacMan_Choose(possibleMoves,h,blankgameMap,m,n,turnMatrix,current_turn,ghosts[-1])
         current_turn +=1 
         nextMove = PacManBFS(path[-1],gameMap,h,m,n,ghosts[-1],moveQueue)
